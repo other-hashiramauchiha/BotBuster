@@ -27,8 +27,8 @@ const InterpretabilityPage: React.FC<InterpretabilityPageProps> = ({ profile, re
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    canvas.width = 600;
-    canvas.height = 400;
+    canvas.width = 700;
+    canvas.height = 450;
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
@@ -36,16 +36,17 @@ const InterpretabilityPage: React.FC<InterpretabilityPageProps> = ({ profile, re
     const values = Object.values(shapValues);
     const maxValue = Math.max(...values.map(Math.abs));
     
-    const barHeight = 30;
-    const barSpacing = 50;
-    const startY = 50;
-    const chartWidth = 400;
-    const startX = 150;
+    const barHeight = 35;
+    const barSpacing = 60;
+    const startY = 80;
+    const chartWidth = 350;
+    const startX = 250;
     
     // Draw title
     ctx.fillStyle = '#1f2937';
-    ctx.font = 'bold 16px Arial';
-    ctx.fillText('SHAP Feature Importance', 20, 30);
+    ctx.font = 'bold 18px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText('SHAP Feature Importance', 20, 35);
     
     features.forEach((feature, index) => {
       const value = values[index];
@@ -54,55 +55,71 @@ const InterpretabilityPage: React.FC<InterpretabilityPageProps> = ({ profile, re
       
       // Draw feature name
       ctx.fillStyle = '#374151';
-      ctx.font = '12px Arial';
+      ctx.font = '14px Arial';
       ctx.textAlign = 'right';
-      ctx.fillText(feature, startX - 10, y + barHeight / 2 + 4);
+      ctx.fillText(feature, startX - 15, y + barHeight / 2 + 5);
       
-      // Draw bar
-      ctx.fillStyle = value > 0 ? '#ef4444' : '#10b981';
+      // Draw bar with appropriate color
       if (value > 0) {
+        ctx.fillStyle = '#ef4444'; // Red for positive (bot-indicating)
         ctx.fillRect(startX, y, barWidth, barHeight);
       } else {
+        ctx.fillStyle = '#10b981'; // Green for negative (human-indicating)
         ctx.fillRect(startX - barWidth, y, barWidth, barHeight);
       }
       
       // Draw value
       ctx.fillStyle = '#1f2937';
-      ctx.font = '11px Arial';
+      ctx.font = 'bold 12px Arial';
       ctx.textAlign = 'left';
-      ctx.fillText(value.toFixed(3), startX + chartWidth + 10, y + barHeight / 2 + 4);
+      ctx.fillText(value.toFixed(3), startX + chartWidth + 15, y + barHeight / 2 + 4);
     });
     
     // Draw zero line
     ctx.strokeStyle = '#6b7280';
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(startX, startY - 10);
-    ctx.lineTo(startX, startY + features.length * barSpacing);
+    ctx.moveTo(startX, startY - 15);
+    ctx.lineTo(startX, startY + features.length * barSpacing - 25);
     ctx.stroke();
+    
+    // Add legend
+    const legendY = canvas.height - 60;
+    ctx.fillStyle = '#ef4444';
+    ctx.fillRect(20, legendY, 15, 15);
+    ctx.fillStyle = '#1f2937';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText('Positive (Bot-indicating)', 45, legendY + 12);
+    
+    ctx.fillStyle = '#10b981';
+    ctx.fillRect(200, legendY, 15, 15);
+    ctx.fillStyle = '#1f2937';
+    ctx.fillText('Negative (Human-indicating)', 225, legendY + 12);
   };
 
   const drawLimeChart = (canvas: HTMLCanvasElement, limeData: any[]) => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    canvas.width = 600;
+    canvas.width = 700;
     canvas.height = 400;
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     const maxWeight = Math.max(...limeData.map(d => Math.abs(d.weight)));
     
-    const barHeight = 30;
-    const barSpacing = 50;
-    const startY = 50;
+    const barHeight = 35;
+    const barSpacing = 60;
+    const startY = 80;
     const chartWidth = 300;
-    const startX = 200;
+    const startX = 280;
     
     // Draw title
     ctx.fillStyle = '#1f2937';
-    ctx.font = 'bold 16px Arial';
-    ctx.fillText('LIME Local Explanations', 20, 30);
+    ctx.font = 'bold 18px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText('LIME Local Explanations', 20, 35);
     
     limeData.forEach((item, index) => {
       const y = startY + index * barSpacing;
@@ -110,32 +127,61 @@ const InterpretabilityPage: React.FC<InterpretabilityPageProps> = ({ profile, re
       
       // Draw feature name
       ctx.fillStyle = '#374151';
-      ctx.font = '12px Arial';
+      ctx.font = '14px Arial';
       ctx.textAlign = 'right';
-      ctx.fillText(item.feature, startX - 10, y + barHeight / 2 + 4);
+      ctx.fillText(item.feature, startX - 15, y + barHeight / 2 + 5);
       
-      // Draw bar
-      ctx.fillStyle = item.weight > 0 ? '#f59e0b' : '#3b82f6';
+      // Draw bar with appropriate color
       if (item.weight > 0) {
+        ctx.fillStyle = '#ef4444'; // Red for positive (bot-indicating)
         ctx.fillRect(startX, y, barWidth, barHeight);
       } else {
+        ctx.fillStyle = '#10b981'; // Green for negative (human-indicating)
         ctx.fillRect(startX - barWidth, y, barWidth, barHeight);
       }
       
       // Draw weight
       ctx.fillStyle = '#1f2937';
-      ctx.font = '11px Arial';
+      ctx.font = 'bold 12px Arial';
       ctx.textAlign = 'left';
-      ctx.fillText(item.weight.toFixed(3), startX + chartWidth + 10, y + barHeight / 2 + 4);
+      ctx.fillText(item.weight.toFixed(3), startX + chartWidth + 15, y + barHeight / 2 + 4);
     });
     
     // Draw zero line
     ctx.strokeStyle = '#6b7280';
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(startX, startY - 10);
-    ctx.lineTo(startX, startY + limeData.length * barSpacing);
+    ctx.moveTo(startX, startY - 15);
+    ctx.lineTo(startX, startY + limeData.length * barSpacing - 25);
     ctx.stroke();
+    
+    // Add legend
+    const legendY = canvas.height - 40;
+    ctx.fillStyle = '#ef4444';
+    ctx.fillRect(20, legendY, 15, 15);
+    ctx.fillStyle = '#1f2937';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText('Positive (Risk Factor)', 45, legendY + 12);
+    
+    ctx.fillStyle = '#10b981';
+    ctx.fillRect(200, legendY, 15, 15);
+    ctx.fillStyle = '#1f2937';
+    ctx.fillText('Negative (Trust Factor)', 225, legendY + 12);
+  };
+
+  const formatFeatureValue = (feature: string, value: any): string => {
+    switch (feature) {
+      case 'Bio Sentiment Score':
+      case 'Profile Completeness':
+        return `${(value * 100).toFixed(1)}%`;
+      case 'Account Age (days)':
+        return Math.round(value).toString();
+      case 'Verification Status':
+        return value > 0.5 ? 'Yes' : 'No';
+      default:
+        return typeof value === 'number' ? value.toFixed(3) : value;
+    }
   };
 
   if (!result || !profile) {
@@ -216,7 +262,7 @@ const InterpretabilityPage: React.FC<InterpretabilityPageProps> = ({ profile, re
         </div>
         <p className="text-gray-600 mb-6">
           SHAP (SHapley Additive exPlanations) values show how each feature contributes to the final prediction. 
-          Positive values push towards 'Bot', negative values push towards 'Human'.
+          Red bars indicate bot-like features, green bars indicate human-like features.
         </p>
         <div className="flex justify-center">
           <canvas ref={shapCanvasRef} className="border border-gray-200 rounded-lg"></canvas>
@@ -249,7 +295,7 @@ const InterpretabilityPage: React.FC<InterpretabilityPageProps> = ({ profile, re
                 <div key={feature} className="flex justify-between py-2 border-b border-gray-100">
                   <span className="text-gray-600">{feature}:</span>
                   <span className="font-medium text-gray-900">
-                    {typeof value === 'number' ? value.toFixed(3) : value}
+                    {formatFeatureValue(feature, value)}
                   </span>
                 </div>
               ))}

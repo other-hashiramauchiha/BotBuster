@@ -25,24 +25,25 @@ const ResultsPage: React.FC = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    canvas.width = 500;
-    canvas.height = 300;
+    canvas.width = 600;
+    canvas.height = 400;
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     const metricNames = Object.keys(metrics);
     const metricValues = Object.values(metrics) as number[];
     
-    const barWidth = 60;
+    const barWidth = 80;
     const barSpacing = 20;
-    const startX = 50;
-    const startY = 250;
-    const maxHeight = 200;
+    const startX = 60;
+    const startY = 320;
+    const maxHeight = 220;
     
     // Draw title
     ctx.fillStyle = '#1f2937';
-    ctx.font = 'bold 16px Arial';
-    ctx.fillText('Model Performance Metrics', 20, 30);
+    ctx.font = 'bold 20px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText('Model Performance Metrics', 20, 35);
     
     metricNames.forEach((name, index) => {
       const value = metricValues[index];
@@ -56,20 +57,34 @@ const ResultsPage: React.FC = () => {
       ctx.fillStyle = gradient;
       ctx.fillRect(x, startY - barHeight, barWidth, barHeight);
       
-      // Draw value on top
+      // Draw value on top with larger, bold font
       ctx.fillStyle = '#1f2937';
-      ctx.font = 'bold 12px Arial';
+      ctx.font = 'bold 16px Arial';
       ctx.textAlign = 'center';
-      ctx.fillText((value * 100).toFixed(1) + '%', x + barWidth / 2, startY - barHeight - 10);
+      ctx.fillText((value * 100).toFixed(1) + '%', x + barWidth / 2, startY - barHeight - 15);
       
-      // Draw metric name
-      ctx.font = '11px Arial';
+      // Draw metric name with better formatting
+      ctx.font = 'bold 14px Arial';
       ctx.save();
-      ctx.translate(x + barWidth / 2, startY + 15);
-      ctx.rotate(-Math.PI / 4);
+      ctx.translate(x + barWidth / 2, startY + 25);
+      ctx.rotate(-Math.PI / 6);
       ctx.fillText(name, 0, 0);
       ctx.restore();
     });
+    
+    // Draw y-axis
+    ctx.strokeStyle = '#374151';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(startX - 10, startY);
+    ctx.lineTo(startX - 10, startY - maxHeight);
+    ctx.stroke();
+    
+    // Draw x-axis
+    ctx.beginPath();
+    ctx.moveTo(startX - 10, startY);
+    ctx.lineTo(startX + metricNames.length * (barWidth + barSpacing), startY);
+    ctx.stroke();
   };
 
   const drawConfusionMatrix = (canvas: HTMLCanvasElement) => {
