@@ -83,11 +83,13 @@ const InterpretabilityPage: React.FC<InterpretabilityPageProps> = ({ profile, re
         ctx.strokeRect(startX - barWidth, y, barWidth, barHeight);
       }
       
-      // Draw value with better positioning
+      // Draw value - ALWAYS on the right side of the bar
       ctx.fillStyle = '#1f2937';
       ctx.font = 'bold 13px Arial';
       ctx.textAlign = 'left';
-      const valueX = value > 0 ? startX + barWidth + 10 : startX - barWidth - 60;
+      // For positive values: right edge of bar + 10px
+      // For negative values: right edge of negative bar (which is startX) + 10px
+      const valueX = value > 0 ? startX + barWidth + 10 : startX + 10;
       ctx.fillText(value.toFixed(3), valueX, y + barHeight / 2 + 5);
     });
     
@@ -174,11 +176,13 @@ const InterpretabilityPage: React.FC<InterpretabilityPageProps> = ({ profile, re
         ctx.strokeRect(startX - barWidth, y, barWidth, barHeight);
       }
       
-      // Draw weight with better positioning
+      // Draw weight - ALWAYS on the right side of the bar
       ctx.fillStyle = '#1f2937';
       ctx.font = 'bold 13px Arial';
       ctx.textAlign = 'left';
-      const valueX = item.weight > 0 ? startX + barWidth + 10 : startX - barWidth - 60;
+      // For positive values: right edge of bar + 10px
+      // For negative values: right edge of negative bar (which is startX) + 10px
+      const valueX = item.weight > 0 ? startX + barWidth + 10 : startX + 10;
       ctx.fillText(item.weight.toFixed(3), valueX, y + barHeight / 2 + 5);
     });
     
